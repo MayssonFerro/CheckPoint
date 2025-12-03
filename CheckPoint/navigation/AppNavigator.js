@@ -6,6 +6,9 @@ import { useAuth } from '../context/AuthContext';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import FeedScreen from '../screens/FeedScreen';
+import GameSearchScreen from '../screens/GameSearchScreen';
+import AddReviewScreen from '../screens/AddReviewScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 const Stack = createStackNavigator();
 
@@ -25,12 +28,17 @@ const RootNavigation = () => {
       <Stack.Navigator>
         {userToken ? (
           // App Stack
-          <Stack.Screen name="Feed" component={FeedScreen} />
+          <>
+            <Stack.Screen name="Feed" component={FeedScreen} />
+            <Stack.Screen name="GameSearch" component={GameSearchScreen} options={{ title: 'Buscar Jogos' }} />
+            <Stack.Screen name="AddReview" component={AddReviewScreen} options={{ title: 'Escrever Review' }} />
+            <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Meu Perfil' }} />
+          </>
         ) : (
           // Auth Stack
           <>
-            <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
           </>
         )}
       </Stack.Navigator>

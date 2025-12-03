@@ -3,7 +3,7 @@ import { View, Text, FlatList, ActivityIndicator, Button, StyleSheet } from 'rea
 import { useAuth } from '../context/AuthContext';
 import { getFeedReviews } from '../api/reviewService';
 
-const FeedScreen = () => {
+const FeedScreen = ({ navigation }) => {
   const { userToken, signOut } = useAuth();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +41,11 @@ const FeedScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Button title="Logout" onPress={signOut} />
+      <View style={styles.header}>
+        <Button title="Logout" onPress={signOut} color="red" />
+        <Button title="Perfil" onPress={() => navigation.navigate('Profile')} />
+        <Button title="Nova Review" onPress={() => navigation.navigate('GameSearch')} />
+      </View>
       <FlatList
         data={reviews}
         keyExtractor={(item) => item._id}
@@ -58,6 +62,11 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingHorizontal: 20,
     backgroundColor: '#f5f5f5',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
   loadingContainer: {
     flex: 1,

@@ -3,7 +3,7 @@ import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
 import { loginUser } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { signIn } = useAuth();
@@ -36,6 +36,7 @@ const LoginScreen = () => {
         secureTextEntry
       />
       <Button title="Entrar" onPress={handleLogin} />
+      <Button title="Não tem conta? Cadastre-se" onPress={() => navigation.navigate('Register')} color="gray" />
     </View>
   );
 };

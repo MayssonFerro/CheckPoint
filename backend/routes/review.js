@@ -32,11 +32,32 @@ router.get('/', protect, async (req, res) => {
   }
 });
 
+router.get('/my-reviews', protect, async (req, res) => {
+  try {
+    const reviews = await Review.find({ user: req.user }).populate('user', 'username');
+    res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 router.get('/game/:rawg_game_id', protect, async (req, res) => {
   try {
     const { rawg_game_id } = req.params;
     const reviews = await Review.find({ rawg_game_id }).populate('user', 'username');
     res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+router.get('/:id', protect, async (req, res) => {
+  try {
+    const review = await Review.findById(req.params.id);
+    if (!review) {
+      return res.status(404).json({ message: 'Review not found' });
+    }
+    res.status(200).json(review);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

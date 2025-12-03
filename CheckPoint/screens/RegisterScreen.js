@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
 import { registerUser } from '../api/auth';
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -41,6 +41,7 @@ const RegisterScreen = () => {
         secureTextEntry
       />
       <Button title="Cadastrar" onPress={handleRegister} />
+      <Button title="Já tem uma conta? Faça Login" onPress={() => navigation.navigate('Login')} color="gray" />
     </View>
   );
 };

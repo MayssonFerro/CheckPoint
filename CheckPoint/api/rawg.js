@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_KEY = 'YOUR_RAWG_API_KEY';
+const API_KEY = '1110000fb6d048079a383b785d852007';
 const BASE_URL = 'https://api.rawg.io/api/games';
 
 export const searchGames = async (query) => {
