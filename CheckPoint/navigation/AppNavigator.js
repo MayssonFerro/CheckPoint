@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
@@ -18,18 +19,39 @@ const RootNavigation = () => {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#ff6400" />
       </View>
     );
   }
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#ff6400',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontFamily: 'Roboto_700Bold',
+          },
+          cardStyle: { backgroundColor: '#151515' },
+        }}
+      >
         {userToken ? (
           // App Stack
           <>
-            <Stack.Screen name="Feed" component={FeedScreen} />
+            <Stack.Screen 
+              name="CheckPoint" 
+              component={FeedScreen} 
+              options={({ navigation }) => ({
+                headerRight: () => (
+                  <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={{ marginRight: 15 }}>
+                    <Ionicons name="person-circle-outline" size={30} color="white" />
+                  </TouchableOpacity>
+                ),
+              })}
+            />
             <Stack.Screen name="GameSearch" component={GameSearchScreen} options={{ title: 'Buscar Jogos' }} />
             <Stack.Screen name="AddReview" component={AddReviewScreen} options={{ title: 'Escrever Review' }} />
             <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Meu Perfil' }} />
@@ -51,6 +73,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#151515',
   },
 });
 

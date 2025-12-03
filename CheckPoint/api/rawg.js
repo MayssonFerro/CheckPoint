@@ -13,7 +13,13 @@ export const searchGames = async (query) => {
     });
     return response.data.results;
   } catch (error) {
-    console.error('Error searching games:', error);
+    console.error('Error searching games:', error.message);
+    if (error.response) {
+      console.error('Response data:', error.response.data);
+      console.error('Response status:', error.response.status);
+    } else if (error.request) {
+      console.error('Request made but no response received:', error.request);
+    }
     throw error;
   }
 };

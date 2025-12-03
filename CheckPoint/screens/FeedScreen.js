@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, ActivityIndicator, Button, StyleSheet } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { getFeedReviews } from '../api/reviewService';
 
 const FeedScreen = ({ navigation }) => {
-  const { userToken, signOut } = useAuth();
+  const { userToken } = useAuth();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,7 +27,7 @@ const FeedScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#ff6400" />
       </View>
     );
   }
@@ -41,17 +42,18 @@ const FeedScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Button title="Logout" onPress={signOut} color="red" />
-        <Button title="Perfil" onPress={() => navigation.navigate('Profile')} />
-        <Button title="Nova Review" onPress={() => navigation.navigate('GameSearch')} />
-      </View>
       <FlatList
         data={reviews}
         keyExtractor={(item) => item._id}
         renderItem={renderItem}
         contentContainerStyle={styles.listContainer}
       />
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => navigation.navigate('GameSearch')}
+      >
+        <Ionicons name="add" size={30} color="white" />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -59,14 +61,7 @@ const FeedScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
     paddingHorizontal: 20,
-    backgroundColor: '#f5f5f5',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
   },
   loadingContainer: {
     flex: 1,
@@ -74,7 +69,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   listContainer: {
-    paddingBottom: 20,
+    paddingBottom: 80, // Add padding to avoid FAB overlap
+    paddingTop: 20,
   },
   reviewItem: {
     backgroundColor: 'white',
@@ -88,16 +84,34 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   username: {
-    fontWeight: 'bold',
+    fontFamily: 'Roboto_700Bold',
     fontSize: 16,
     marginBottom: 5,
   },
   rating: {
     color: '#888',
     marginBottom: 5,
+    fontFamily: 'Roboto_400Regular',
   },
   opinion: {
     fontSize: 14,
+    fontFamily: 'Roboto_400Regular',
+  },
+  fab: {
+    position: 'absolute',
+    width: 60,
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 20,
+    bottom: 20,
+    backgroundColor: '#ff6400',
+    borderRadius: 30,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
 });
 

@@ -46,7 +46,7 @@ const GameSearchScreen = ({ navigation }) => {
         onChangeText={setSearchTerm}
       />
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+        <ActivityIndicator size="large" color="#ff6400" style={styles.loader} />
       ) : (
         <FlatList
           data={searchResults}
@@ -65,7 +65,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
   },
   searchInput: {
     height: 50,
@@ -74,6 +73,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 16,
     marginBottom: 16,
+    backgroundColor: '#fff',
   },
   loader: {
     marginTop: 20,
@@ -94,13 +94,15 @@ const styles = StyleSheet.create({
   },
   gameTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'Roboto_700Bold',
     flex: 1,
+    color: '#fff',
   },
   emptyText: {
     textAlign: 'center',
     marginTop: 20,
-    color: '#888',
+    color: '#ccc',
+    fontFamily: 'Roboto_400Regular',
   },
 });
 

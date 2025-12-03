@@ -23,6 +23,7 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json({ userId: newUser._id });
   } catch (error) {
+    console.error('Error in /register:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });

@@ -51,6 +51,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 20,
     textAlign: 'center',
+    color: '#fff',
+    fontFamily: 'Roboto_700Bold',
   },
   input: {
     height: 40,
@@ -58,6 +60,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 12,
     paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    fontFamily: 'Roboto_400Regular',
   },
 });
 

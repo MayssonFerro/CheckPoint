@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Alert, Button } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { getUserReviews, deleteReview } from '../api/reviewService';
 
 const ProfileScreen = ({ navigation }) => {
-  const { userToken } = useAuth();
+  const { userToken, signOut } = useAuth();
   const [userReviews, setUserReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -79,14 +80,17 @@ const ProfileScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#ff6400" />
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerTitle}>Meu Perfil</Text>
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerTitle}>Meu Perfil</Text>
+        <Button title="Sair" onPress={signOut} color="red" />
+      </View>
       <FlatList
         data={userReviews}
         keyExtractor={(item) => item._id}
@@ -94,6 +98,12 @@ const ProfileScreen = ({ navigation }) => {
         contentContainerStyle={styles.listContainer}
         ListEmptyComponent={<Text style={styles.emptyText}>Você ainda não fez nenhuma review.</Text>}
       />
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => navigation.navigate('GameSearch')}
+      >
+        <Ionicons name="add" size={30} color="white" />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -102,21 +112,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   headerTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
+    fontFamily: 'Roboto_700Bold',
+    color: '#fff',
   },
   listContainer: {
-    paddingBottom: 20,
+    paddingBottom: 80, // Add padding to avoid FAB overlap
   },
   reviewItem: {
     backgroundColor: 'white',
@@ -131,16 +145,18 @@ const styles = StyleSheet.create({
   },
   gameTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'Roboto_700Bold',
     marginBottom: 5,
   },
   rating: {
     color: '#888',
     marginBottom: 5,
+    fontFamily: 'Roboto_400Regular',
   },
   opinion: {
     fontSize: 14,
     marginBottom: 10,
+    fontFamily: 'Roboto_400Regular',
   },
   actionsContainer: {
     flexDirection: 'row',
@@ -162,12 +178,29 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 12,
-    fontWeight: 'bold',
+    fontFamily: 'Roboto_700Bold',
   },
   emptyText: {
     textAlign: 'center',
     marginTop: 20,
-    color: '#888',
+    color: '#ccc',
+    fontFamily: 'Roboto_400Regular',
+  },
+  fab: {
+    position: 'absolute',
+    width: 60,
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 20,
+    bottom: 20,
+    backgroundColor: '#ff6400',
+    borderRadius: 30,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
 });
 
