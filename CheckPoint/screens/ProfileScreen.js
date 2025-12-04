@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Alert, Button } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { getUserReviews, deleteReview } from '../api/reviewService';
 
 const ProfileScreen = ({ navigation }) => {
-  const { userToken, signOut } = useAuth();
+  const { userToken } = useAuth();
   const [userReviews, setUserReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -55,42 +55,47 @@ const ProfileScreen = ({ navigation }) => {
 
   const renderItem = ({ item }) => (
     <View style={styles.reviewItem}>
-      <Text style={styles.gameTitle}>Jogo ID: {item.rawg_game_id}</Text>
-      <Text style={styles.rating}>Nota: {item.rating}/10</Text>
-      <Text style={styles.opinion}>{item.opinion}</Text>
-      
-      <View style={styles.actionsContainer}>
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => navigation.navigate('AddReview', { reviewId: item._id, gameId: item.rawg_game_id, gameName: `Jogo ${item.rawg_game_id}` })}
-        >
-          <Text style={styles.buttonText}>Editar</Text>
-        </TouchableOpacity>
+      <View style={styles.cardHeader}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.gameTitle}>{item.game_name || `Jogo ${item.rawg_game_id}`}</Text>
+          <Text style={styles.rating}>Nota: {item.rating}/10</Text>
+        </View>
         
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => handleDeleteReview(item._id)}
-        >
-          <Text style={styles.buttonText}>Deletar</Text>
-        </TouchableOpacity>
+        <View style={styles.actionsContainer}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => navigation.navigate('AddReview', { reviewId: item._id, gameId: item.rawg_game_id, gameName: item.game_name || `Jogo ${item.rawg_game_id}` })}
+          >
+            <Ionicons name="pencil" size={20} color="#fff" />
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => handleDeleteReview(item._id)}
+          >
+            <Ionicons name="trash" size={20} color="#F44336" />
+          </TouchableOpacity>
+        </View>
       </View>
+
+      {item.game_background_image && (
+        <Image source={{ uri: item.game_background_image }} style={styles.gameImage} />
+      )}
+
+      <Text style={styles.opinion}>{item.opinion}</Text>
     </View>
   );
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#ff6400" />
+        <ActivityIndicator size="large" color="#fa801f" />
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerTitle}>Meu Perfil</Text>
-        <Button title="Sair" onPress={signOut} color="red" />
-      </View>
       <FlatList
         data={userReviews}
         keyExtractor={(item) => item._id}
@@ -118,73 +123,61 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontFamily: 'Roboto_700Bold',
-    color: '#fff',
-  },
   listContainer: {
     paddingBottom: 80, // Add padding to avoid FAB overlap
   },
   reviewItem: {
-    backgroundColor: 'white',
+    backgroundColor: '#202020',
     padding: 15,
     borderRadius: 8,
-    marginBottom: 10,
+    marginBottom: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
   },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+  },
   gameTitle: {
-    fontSize: 16,
-    fontFamily: 'Roboto_700Bold',
-    marginBottom: 5,
+    fontFamily: 'Ubuntu_700Bold',
+    fontSize: 18,
+    color: '#fff',
+    marginBottom: 2,
   },
   rating: {
-    color: '#888',
-    marginBottom: 5,
-    fontFamily: 'Roboto_400Regular',
+    color: '#fa801f',
+    fontFamily: 'Ubuntu_700Bold',
+    fontSize: 14,
+  },
+  gameImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: 5,
+    marginBottom: 10,
   },
   opinion: {
     fontSize: 14,
+    fontFamily: 'Ubuntu_400Regular',
+    color: '#ddd',
     marginBottom: 10,
-    fontFamily: 'Roboto_400Regular',
   },
   actionsContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
   },
-  editButton: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    marginRight: 10,
-  },
-  deleteButton: {
-    backgroundColor: '#F44336',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 12,
-    fontFamily: 'Roboto_700Bold',
+  iconButton: {
+    padding: 5,
+    marginLeft: 10,
   },
   emptyText: {
     textAlign: 'center',
     marginTop: 20,
     color: '#ccc',
-    fontFamily: 'Roboto_400Regular',
+    fontFamily: 'Ubuntu_400Regular',
   },
   fab: {
     position: 'absolute',
@@ -194,7 +187,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     right: 20,
     bottom: 20,
-    backgroundColor: '#ff6400',
+    backgroundColor: '#fa801f',
     borderRadius: 30,
     elevation: 8,
     shadowColor: '#000',

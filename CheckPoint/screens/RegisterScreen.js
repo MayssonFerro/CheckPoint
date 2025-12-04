@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet, Alert, Text, Image } from 'react-native';
 import { registerUser } from '../api/auth';
 
 const RegisterScreen = ({ navigation }) => {
@@ -11,23 +11,30 @@ const RegisterScreen = ({ navigation }) => {
     try {
       await registerUser(username, email, password);
       Alert.alert('Sucesso', 'Usuário cadastrado com sucesso!');
-    } catch (_error) {
-      Alert.alert('Erro', 'Falha ao cadastrar usuário.');
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message || 'Falha ao cadastrar usuário.';
+      Alert.alert('Erro', errorMessage);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Cadastro</Text>
+      <View style={{ alignItems: 'center' }}>
+        <Image source={require('../assets/images/logo.png')} style={styles.logo} />
+      </View>
+      <Text style={styles.title}>CheckPoint</Text>
+      <Text style={styles.subtitle}>Avalie seus jogos favoritos</Text>
       <TextInput
         style={styles.input}
-        placeholder="Username"
+        placeholder="Nome de usuário"
+        placeholderTextColor="#666"
         value={username}
         onChangeText={setUsername}
       />
       <TextInput
         style={styles.input}
         placeholder="Email"
+        placeholderTextColor="#666"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -35,13 +42,18 @@ const RegisterScreen = ({ navigation }) => {
       />
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder="Senha"
+        placeholderTextColor="#666"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Cadastrar" onPress={handleRegister} />
-      <Button title="Já tem uma conta? Faça Login" onPress={() => navigation.navigate('Login')} color="gray" />
+      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+        <Text style={styles.registerButtonText}>Cadastrar</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.loginButtonText}>Já tem uma conta? Faça Login</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -52,22 +64,56 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
+  logo: {
+    width: 200,
+    height: 200,
+    marginBottom: 10,
+  },
   title: {
     fontSize: 24,
-    marginBottom: 20,
+    marginBottom: 10,
     textAlign: 'center',
     color: '#fff',
-    fontFamily: 'Roboto_700Bold',
+    fontFamily: 'Ubuntu_700Bold',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#ccc',
+    textAlign: 'center',
+    marginBottom: 20,
+    fontFamily: 'Ubuntu_400Regular',
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#444',
     borderWidth: 1,
     marginBottom: 12,
     paddingHorizontal: 10,
-    backgroundColor: '#fff',
+    backgroundColor: '#202020',
     borderRadius: 5,
-    fontFamily: 'Roboto_400Regular',
+    fontFamily: 'Ubuntu_400Regular',
+    color: '#fff',
+  },
+  registerButton: {
+    backgroundColor: '#fa801f',
+    padding: 12,
+    borderRadius: 25,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  registerButtonText: {
+    color: '#fff',
+    fontFamily: 'Ubuntu_700Bold',
+    fontSize: 16,
+  },
+  loginButton: {
+    marginTop: 15,
+    alignItems: 'center',
+  },
+  loginButtonText: {
+    color: '#888',
+    fontFamily: 'Ubuntu_400Regular',
+    fontSize: 14,
   },
 });
 

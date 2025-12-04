@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, TouchableOpacity, Image, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,12 +14,12 @@ import ProfileScreen from '../screens/ProfileScreen';
 const Stack = createStackNavigator();
 
 const RootNavigation = () => {
-  const { userToken, isLoading } = useAuth();
+  const { userToken, isLoading, signOut } = useAuth();
 
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#ff6400" />
+        <ActivityIndicator size="large" color="#fa801f" />
       </View>
     );
   }
@@ -29,11 +29,11 @@ const RootNavigation = () => {
       <Stack.Navigator
         screenOptions={{
           headerStyle: {
-            backgroundColor: '#ff6400',
+            backgroundColor: '#fa801f',
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
-            fontFamily: 'Roboto_700Bold',
+            fontFamily: 'Ubuntu_700Bold',
           },
           cardStyle: { backgroundColor: '#151515' },
         }}
@@ -45,6 +45,15 @@ const RootNavigation = () => {
               name="CheckPoint" 
               component={FeedScreen} 
               options={({ navigation }) => ({
+                headerTitle: () => (
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Image 
+                      source={require('../assets/images/logo.png')} 
+                      style={{ width: 30, height: 30, marginRight: 10 }} 
+                    />
+                    <Text style={{ fontFamily: 'Ubuntu_700Bold', fontSize: 20, color: '#fff' }}>CheckPoint</Text>
+                  </View>
+                ),
                 headerRight: () => (
                   <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={{ marginRight: 15 }}>
                     <Ionicons name="person-circle-outline" size={30} color="white" />
@@ -54,13 +63,24 @@ const RootNavigation = () => {
             />
             <Stack.Screen name="GameSearch" component={GameSearchScreen} options={{ title: 'Buscar Jogos' }} />
             <Stack.Screen name="AddReview" component={AddReviewScreen} options={{ title: 'Escrever Review' }} />
-            <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Meu Perfil' }} />
+            <Stack.Screen 
+              name="Profile" 
+              component={ProfileScreen} 
+              options={{ 
+                title: 'Meu Perfil',
+                headerRight: () => (
+                  <TouchableOpacity onPress={signOut} style={{ marginRight: 15 }}>
+                    <Ionicons name="log-out-outline" size={24} color="white" />
+                  </TouchableOpacity>
+                ),
+              }} 
+            />
           </>
         ) : (
           // Auth Stack
           <>
-            <Stack.Screen name="Register" component={RegisterScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Cadastrar" component={RegisterScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
           </>
         )}
       </Stack.Navigator>

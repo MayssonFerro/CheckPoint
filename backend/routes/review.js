@@ -5,10 +5,12 @@ const protect = require('../middleware/auth');
 
 router.post('/', protect, async (req, res) => {
   try {
-    const { rawg_game_id, rating, opinion, recommended, platform_played } = req.body;
+    const { rawg_game_id, game_name, game_background_image, rating, opinion, recommended, platform_played } = req.body;
 
     const newReview = new Review({
       rawg_game_id,
+      game_name,
+      game_background_image,
       user: req.user,
       rating,
       opinion,

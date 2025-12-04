@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { getFeedReviews } from '../api/reviewService';
@@ -9,34 +10,45 @@ const FeedScreen = ({ navigation }) => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const data = await getFeedReviews(userToken);
-        setReviews(data);
-      } catch (error) {
-        console.error('Failed to fetch reviews', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const fetchReviews = async () => {
+        try {
+          const data = await getFeedReviews(userToken);
+          setReviews(data);
+        } catch (error) {
+          console.error('Failed to fetch reviews', error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    fetchReviews();
-  }, [userToken]);
+      fetchReviews();
+    }, [userToken])
+  );
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#ff6400" />
+        <ActivityIndicator size="large" color="#fa801f" />
       </View>
     );
   }
 
   const renderItem = ({ item }) => (
     <View style={styles.reviewItem}>
-      <Text style={styles.username}>{item.user?.username || 'Unknown User'}</Text>
-      <Text style={styles.rating}>Rating: {item.rating}/10</Text>
+      <Text style={styles.gameTitle}>{item.game_name || 'Jogo Desconhecido'}</Text>
+      <Text style={styles.rating}>Nota: {item.rating}/10</Text>
+      
+      {item.game_background_image && (
+        <Image source={{ uri: item.game_background_image }} style={styles.gameImage} />
+      )}
+
       <Text style={styles.opinion}>{item.opinion}</Text>
+      
+      <View style={styles.footer}>
+        <Text style={styles.username}>por {item.user?.username || 'Unknown User'}</Text>
+      </View>
     </View>
   );
 
@@ -47,6 +59,7 @@ const FeedScreen = ({ navigation }) => {
         keyExtractor={(item) => item._id}
         renderItem={renderItem}
         contentContainerStyle={styles.listContainer}
+        ListHeaderComponent={<Text style={styles.sectionTitle}>Reviews</Text>}
       />
       <TouchableOpacity
         style={styles.fab}
@@ -72,30 +85,54 @@ const styles = StyleSheet.create({
     paddingBottom: 80, // Add padding to avoid FAB overlap
     paddingTop: 20,
   },
+  sectionTitle: {
+    fontFamily: 'Ubuntu_700Bold',
+    fontSize: 24,
+    color: '#fff',
+    marginBottom: 15,
+  },
   reviewItem: {
-    backgroundColor: 'white',
+    backgroundColor: '#202020',
     padding: 15,
     borderRadius: 8,
-    marginBottom: 10,
+    marginBottom: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
   },
-  username: {
-    fontFamily: 'Roboto_700Bold',
-    fontSize: 16,
-    marginBottom: 5,
+  gameTitle: {
+    fontFamily: 'Ubuntu_700Bold',
+    fontSize: 18,
+    color: '#fff',
+    marginBottom: 2,
   },
   rating: {
-    color: '#888',
-    marginBottom: 5,
-    fontFamily: 'Roboto_400Regular',
+    color: '#fa801f',
+    marginBottom: 10,
+    fontFamily: 'Ubuntu_700Bold',
+    fontSize: 14,
+  },
+  gameImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: 5,
+    marginBottom: 10,
   },
   opinion: {
     fontSize: 14,
-    fontFamily: 'Roboto_400Regular',
+    fontFamily: 'Ubuntu_400Regular',
+    color: '#ddd',
+    marginBottom: 10,
+  },
+  footer: {
+    alignItems: 'flex-end',
+  },
+  username: {
+    fontFamily: 'Ubuntu_400Regular',
+    fontSize: 12,
+    color: '#888',
   },
   fab: {
     position: 'absolute',
@@ -105,7 +142,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     right: 20,
     bottom: 20,
-    backgroundColor: '#ff6400',
+    backgroundColor: '#fa801f',
     borderRadius: 30,
     elevation: 8,
     shadowColor: '#000',

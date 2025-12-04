@@ -41,19 +41,20 @@ const GameSearchScreen = ({ navigation }) => {
     <View style={styles.container}>
       <TextInput
         style={styles.searchInput}
-        placeholder="Search for a game..."
+        placeholder="Procure um jogo..."
+        placeholderTextColor="#666"
         value={searchTerm}
         onChangeText={setSearchTerm}
       />
       {loading ? (
-        <ActivityIndicator size="large" color="#ff6400" style={styles.loader} />
+        <ActivityIndicator size="large" color="#fa801f" style={styles.loader} />
       ) : (
         <FlatList
           data={searchResults}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           ListEmptyComponent={
-            searchTerm && !loading ? <Text style={styles.emptyText}>No games found</Text> : null
+            searchTerm && !loading ? <Text style={styles.emptyText}>Nenhum jogo encontrado</Text> : null
           }
         />
       )}
@@ -68,12 +69,14 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     height: 50,
-    borderColor: '#ccc',
+    borderColor: '#444',
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 16,
     marginBottom: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#202020',
+    color: '#fff',
+    fontFamily: 'Ubuntu_400Regular',
   },
   loader: {
     marginTop: 20,
@@ -94,7 +97,7 @@ const styles = StyleSheet.create({
   },
   gameTitle: {
     fontSize: 16,
-    fontFamily: 'Roboto_700Bold',
+    fontFamily: 'Ubuntu_700Bold',
     flex: 1,
     color: '#fff',
   },
@@ -102,7 +105,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
     color: '#ccc',
-    fontFamily: 'Roboto_400Regular',
+    fontFamily: 'Ubuntu_400Regular',
   },
 });
 

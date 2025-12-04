@@ -18,8 +18,22 @@ export const searchGames = async (query) => {
       console.error('Response data:', error.response.data);
       console.error('Response status:', error.response.status);
     } else if (error.request) {
-      console.error('Request made but no response received:', error.request);
+      console.error('Request data:', error.request);
     }
+    throw error;
+  }
+};
+
+export const getGameDetails = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/${id}`, {
+      params: {
+        key: API_KEY,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching game details:', error);
     throw error;
   }
 };

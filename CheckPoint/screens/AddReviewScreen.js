@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Switch, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, Switch, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { createReview, getReviewById, updateReview } from '../api/reviewService';
+import { getGameDetails } from '../api/rawg';
 
 const AddReviewScreen = ({ route, navigation }) => {
   const { gameId, gameName, reviewId } = route.params;
@@ -12,6 +13,21 @@ const AddReviewScreen = ({ route, navigation }) => {
   const [platformPlayed, setPlatformPlayed] = useState('');
   const [recommended, setRecommended] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [gameDetails, setGameDetails] = useState(null);
+
+  useEffect(() => {
+    const fetchGameInfo = async () => {
+      if (gameId) {
+        try {
+          const details = await getGameDetails(gameId);
+          setGameDetails(details);
+        } catch (error) {
+          console.error('Error fetching game details:', error);
+        }
+      }
+    };
+    fetchGameInfo();
+  }, [gameId]);
 
   useEffect(() => {
     if (reviewId) {
@@ -53,7 +69,7 @@ const AddReviewScreen = ({ route, navigation }) => {
           platform_played: platformPlayed,
         });
         Alert.alert('Sucesso', 'Review atualizada com sucesso!', [
-          { text: 'OK', onPress: () => navigation.navigate('Profile') }
+          { text: 'OK', onPress: () => navigation.goBack() }
         ]);
       } else {
         await createReview(userToken, gameId, {
@@ -61,9 +77,11 @@ const AddReviewScreen = ({ route, navigation }) => {
           opinion,
           recommended,
           platform_played: platformPlayed,
+          game_name: gameName,
+          game_background_image: gameDetails?.background_image
         });
         Alert.alert('Sucesso', 'Review criada com sucesso!', [
-          { text: 'OK', onPress: () => navigation.navigate('Feed') }
+          { text: 'OK', onPress: () => navigation.popToTop() }
         ]);
       }
     } catch (_error) {
@@ -73,7 +91,20 @@ const AddReviewScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{isEditing ? 'Atualizar Review' : `Adicionar Review para ${gameName}`}</Text>
+      <View style={styles.headerInfo}>
+        {gameDetails && (
+          <Text style={styles.releaseText}>{gameDetails.released}</Text>
+        )}
+        {gameDetails && gameDetails.background_image && (
+          <Image source={{ uri: gameDetails.background_image }} style={styles.coverImage} />
+        )}
+        <Text style={styles.title}>{gameName}</Text>
+        {gameDetails && (
+          <Text style={styles.devPubText}>
+            {gameDetails.developers?.map(d => d.name).join(', ')} | {gameDetails.publishers?.map(p => p.name).join(', ')}
+          </Text>
+        )}
+      </View>
       
       <Text style={styles.label}>Nota:</Text>
       <View style={styles.ratingContainer}>
@@ -81,7 +112,7 @@ const AddReviewScreen = ({ route, navigation }) => {
           <TouchableOpacity key={num} onPress={() => setRating(num.toString())}>
             <View style={[
               styles.ratingCircle,
-              { backgroundColor: num <= (parseInt(rating) || 0) ? '#ff6400' : '#ccc' }
+              { backgroundColor: num <= (parseInt(rating) || 0) ? '#fa801f' : '#ccc' }
             ]}>
               <Text style={styles.ratingText}>{num}</Text>
             </View>
@@ -97,7 +128,7 @@ const AddReviewScreen = ({ route, navigation }) => {
             onPress={() => setPlatformPlayed(p)}
             style={[
               styles.platformChip,
-              { backgroundColor: platformPlayed === p ? '#ff6400' : '#ccc' }
+              { backgroundColor: platformPlayed === p ? '#fa801f' : '#ccc' }
             ]}
           >
             <Text style={styles.platformText}>{p}</Text>
@@ -108,6 +139,7 @@ const AddReviewScreen = ({ route, navigation }) => {
       <TextInput
         style={[styles.input, styles.textArea]}
         placeholder="Sua opinião"
+        placeholderTextColor="#666"
         value={opinion}
         onChangeText={setOpinion}
         multiline
@@ -123,7 +155,27 @@ const AddReviewScreen = ({ route, navigation }) => {
         <Text style={styles.switchValue}>{recommended ? 'Sim' : 'Não'}</Text>
       </View>
 
-      <Button title={isEditing ? "Atualizar Review" : "Enviar Review"} onPress={handleSubmit} />
+      {gameDetails && (
+        <View style={styles.extraInfoContainer}>
+          <Text style={styles.label}>Gêneros:</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.platformContainer}>
+            {gameDetails.genres?.map((g) => (
+              <View key={g.id} style={[styles.platformChip, { backgroundColor: '#444' }]}>
+                <Text style={[styles.platformText, { color: '#fff' }]}>{g.name}</Text>
+              </View>
+            ))}
+          </ScrollView>
+          
+          <View style={styles.metaContainer}>
+            <Text style={styles.metaText}>Metacritic: <Text style={{ color: '#fa801f' }}>{gameDetails.metacritic}</Text></Text>
+            <Text style={styles.metaText}>Público: <Text style={{ color: '#fa801f' }}>{gameDetails.rating}</Text></Text>
+          </View>
+        </View>
+      )}
+
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>{isEditing ? "Atualizar Review" : "Enviar Review"}</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -135,32 +187,33 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontFamily: 'Roboto_700Bold',
-    marginBottom: 20,
+    fontFamily: 'Ubuntu_700Bold',
+    marginBottom: 0,
     textAlign: 'center',
     color: '#fff',
   },
   input: {
     height: 40,
-    borderColor: '#ccc',
+    borderColor: '#444',
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 10,
     paddingHorizontal: 10,
-    backgroundColor: '#fff',
-    fontFamily: 'Roboto_400Regular',
+    backgroundColor: '#151515',
+    fontFamily: 'Ubuntu_400Regular',
   },
   textArea: {
     height: 100,
     textAlignVertical: 'top',
     paddingTop: 10,
-    backgroundColor: '#fff',
-    borderColor: '#ccc',
+    backgroundColor: '#151515',
+    borderColor: '#444',
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 15,
     paddingHorizontal: 10,
-    fontFamily: 'Roboto_400Regular',
+    fontFamily: 'Ubuntu_400Regular',
+    color: '#fff',
   },
   switchContainer: {
     flexDirection: 'row',
@@ -170,8 +223,9 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginRight: 10,
+    marginBottom: 5,
     color: '#fff',
-    fontFamily: 'Roboto_400Regular',
+    fontFamily: 'Ubuntu_400Regular',
   },
   switchValue: {
     fontSize: 16,
@@ -191,9 +245,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ratingText: {
-    color: 'white',
+    color: '#151515',
     fontSize: 12,
-    fontFamily: 'Roboto_700Bold',
+    fontFamily: 'Ubuntu_700Bold',
   },
   platformContainer: {
     height: 40,
@@ -209,8 +263,56 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   platformText: {
-    color: 'white',
-    fontFamily: 'Roboto_700Bold',
+    color: '#151515',
+    fontFamily: 'Ubuntu_700Bold',
+  },
+  submitButton: {
+    backgroundColor: '#fa801f',
+    paddingVertical: 15,
+    borderRadius: 25,
+    alignItems: 'center',
+    marginTop: 'auto',
+  },
+  submitButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontFamily: 'Ubuntu_700Bold',
+  },
+  headerInfo: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  devPubText: {
+    color: '#ccc',
+    fontSize: 12,
+    fontFamily: 'Ubuntu_400Regular',
+    marginBottom: 5,
+    textAlign: 'center',
+  },
+  releaseText: {
+    color: '#ccc',
+    fontSize: 12,
+    fontFamily: 'Ubuntu_400Regular',
+    marginBottom: 5,
+  },
+  coverImage: {
+    width: 100,
+    height: 140,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  extraInfoContainer: {
+    marginBottom: 20,
+  },
+  metaContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
+  },
+  metaText: {
+    color: '#fff',
+    fontSize: 18,
+    fontFamily: 'Ubuntu_700Bold',
   },
 });
 

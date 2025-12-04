@@ -5,6 +5,13 @@ const reviewSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  game_name: {
+    type: String,
+    required: true
+  },
+  game_background_image: {
+    type: String
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
