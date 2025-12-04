@@ -156,6 +156,8 @@ const AddReviewScreen = ({ route, navigation }) => {
             <Switch
               value={recommended}
               onValueChange={setRecommended}
+              trackColor={{ false: "#767577", true: "#fa801f" }}
+              thumbColor={recommended ? "#fff" : "#f4f3f4"}
             />
             <Text style={styles.switchValue}>{recommended ? 'Sim' : 'Não'}</Text>
           </View>
