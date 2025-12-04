@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Switch, TouchableOpacity, ScrollView, Image, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, Switch, TouchableOpacity, ScrollView, Image, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { createReview, getReviewById, updateReview } from '../api/reviewService';
 import { getGameDetails } from '../api/rawg';
