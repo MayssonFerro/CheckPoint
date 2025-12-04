@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Switch, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, Switch, TouchableOpacity, ScrollView, Image, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { createReview, getReviewById, updateReview } from '../api/reviewService';
 import { getGameDetails } from '../api/rawg';
@@ -90,99 +90,106 @@ const AddReviewScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerInfo}>
-        {gameDetails && (
-          <Text style={styles.releaseText}>{gameDetails.released}</Text>
-        )}
-        {gameDetails && gameDetails.background_image && (
-          <Image source={{ uri: gameDetails.background_image }} style={styles.coverImage} />
-        )}
-        <Text style={styles.title}>{gameName}</Text>
-        {gameDetails && (
-          <Text style={styles.devPubText}>
-            {gameDetails.developers?.map(d => d.name).join(', ')} | {gameDetails.publishers?.map(p => p.name).join(', ')}
-          </Text>
-        )}
-      </View>
-      
-      <Text style={styles.label}>Nota:</Text>
-      <View style={styles.ratingContainer}>
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-          <TouchableOpacity key={num} onPress={() => setRating(num.toString())}>
-            <View style={[
-              styles.ratingCircle,
-              { backgroundColor: num <= (parseInt(rating) || 0) ? '#fa801f' : '#ccc' }
-            ]}>
-              <Text style={styles.ratingText}>{num}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
-      
-      <Text style={styles.label}>Plataforma:</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.platformContainer}>
-        {['PC', 'PS5', 'PS4', 'Xbox Series', 'Xbox One', 'Switch', 'Mobile'].map((p) => (
-          <TouchableOpacity
-            key={p}
-            onPress={() => setPlatformPlayed(p)}
-            style={[
-              styles.platformChip,
-              { backgroundColor: platformPlayed === p ? '#fa801f' : '#ccc' }
-            ]}
-          >
-            <Text style={styles.platformText}>{p}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      <TextInput
-        style={[styles.input, styles.textArea]}
-        placeholder="Sua opinião"
-        placeholderTextColor="#666"
-        value={opinion}
-        onChangeText={setOpinion}
-        multiline
-        numberOfLines={4}
-      />
-
-      <View style={styles.switchContainer}>
-        <Text style={styles.label}>Recomendado?</Text>
-        <Switch
-          value={recommended}
-          onValueChange={setRecommended}
-        />
-        <Text style={styles.switchValue}>{recommended ? 'Sim' : 'Não'}</Text>
-      </View>
-
-      {gameDetails && (
-        <View style={styles.extraInfoContainer}>
-          <Text style={styles.label}>Gêneros:</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView contentContainerStyle={styles.container}>
+          <View style={styles.headerInfo}>
+            {gameDetails && (
+              <Text style={styles.releaseText}>{gameDetails.released}</Text>
+            )}
+            {gameDetails && gameDetails.background_image && (
+              <Image source={{ uri: gameDetails.background_image }} style={styles.coverImage} />
+            )}
+            <Text style={styles.title}>{gameName}</Text>
+            {gameDetails && (
+              <Text style={styles.devPubText}>
+                {gameDetails.developers?.map(d => d.name).join(', ')} | {gameDetails.publishers?.map(p => p.name).join(', ')}
+              </Text>
+            )}
+          </View>
+          
+          <Text style={styles.label}>Nota:</Text>
+          <View style={styles.ratingContainer}>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+              <TouchableOpacity key={num} onPress={() => setRating(num.toString())}>
+                <View style={[
+                  styles.ratingCircle,
+                  { backgroundColor: num <= (parseInt(rating) || 0) ? '#fa801f' : '#ccc' }
+                ]}>
+                  <Text style={styles.ratingText}>{num}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+          
+          <Text style={styles.label}>Plataforma:</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.platformContainer}>
-            {gameDetails.genres?.map((g) => (
-              <View key={g.id} style={[styles.platformChip, { backgroundColor: '#444' }]}>
-                <Text style={[styles.platformText, { color: '#fff' }]}>{g.name}</Text>
-              </View>
+            {['PC', 'PS5', 'PS4', 'Xbox Series', 'Xbox One', 'Switch', 'Mobile'].map((p) => (
+              <TouchableOpacity
+                key={p}
+                onPress={() => setPlatformPlayed(p)}
+                style={[
+                  styles.platformChip,
+                  { backgroundColor: platformPlayed === p ? '#fa801f' : '#ccc' }
+                ]}
+              >
+                <Text style={styles.platformText}>{p}</Text>
+              </TouchableOpacity>
             ))}
           </ScrollView>
-          
-          <View style={styles.metaContainer}>
-            <Text style={styles.metaText}>Metacritic: <Text style={{ color: '#fa801f' }}>{gameDetails.metacritic}</Text></Text>
-            <Text style={styles.metaText}>Público: <Text style={{ color: '#fa801f' }}>{gameDetails.rating}</Text></Text>
-          </View>
-        </View>
-      )}
 
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>{isEditing ? "Atualizar Review" : "Enviar Review"}</Text>
-      </TouchableOpacity>
-    </View>
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            placeholder="Sua opinião"
+            placeholderTextColor="#666"
+            value={opinion}
+            onChangeText={setOpinion}
+            multiline
+            numberOfLines={4}
+          />
+
+          <View style={styles.switchContainer}>
+            <Text style={styles.label}>Recomendado?</Text>
+            <Switch
+              value={recommended}
+              onValueChange={setRecommended}
+            />
+            <Text style={styles.switchValue}>{recommended ? 'Sim' : 'Não'}</Text>
+          </View>
+
+          {gameDetails && (
+            <View style={styles.extraInfoContainer}>
+              <Text style={styles.label}>Gêneros:</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.platformContainer}>
+                {gameDetails.genres?.map((g) => (
+                  <View key={g.id} style={[styles.platformChip, { backgroundColor: '#444' }]}>
+                    <Text style={[styles.platformText, { color: '#fff' }]}>{g.name}</Text>
+                  </View>
+                ))}
+              </ScrollView>
+              
+              <View style={styles.metaContainer}>
+                <Text style={styles.metaText}>Metacritic: <Text style={{ color: '#fa801f' }}>{gameDetails.metacritic}</Text></Text>
+                <Text style={styles.metaText}>Público: <Text style={{ color: '#fa801f' }}>{gameDetails.rating}</Text></Text>
+              </View>
+            </View>
+          )}
+
+          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+            <Text style={styles.submitButtonText}>{isEditing ? "Atualizar Review" : "Enviar Review"}</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 20,
   },
   title: {
@@ -271,7 +278,8 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 25,
     alignItems: 'center',
-    marginTop: 'auto',
+    marginTop: 20,
+    marginBottom: 40,
   },
   submitButtonText: {
     color: '#fff',
