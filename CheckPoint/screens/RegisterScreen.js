@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, Alert, Text, Image } from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet, Alert, Text, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { registerUser } from '../api/auth';
 
 const RegisterScreen = ({ navigation }) => {
@@ -10,7 +10,13 @@ const RegisterScreen = ({ navigation }) => {
   const handleRegister = async () => {
     try {
       await registerUser(username, email, password);
-      Alert.alert('Sucesso', 'Usuário cadastrado com sucesso!');
+      Alert.alert(
+        'Sucesso',
+        'Usuário cadastrado com sucesso!',
+        [
+          { text: 'OK', onPress: () => navigation.navigate('Login') }
+        ]
+      );
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message || 'Falha ao cadastrar usuário.';
       Alert.alert('Erro', errorMessage);
@@ -18,49 +24,56 @@ const RegisterScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={{ alignItems: 'center' }}>
-        <Image source={require('../assets/images/logo.png')} style={styles.logo} />
-      </View>
-      <Text style={styles.title}>CheckPoint</Text>
-      <Text style={styles.subtitle}>Avalie seus jogos favoritos</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nome de usuário"
-        placeholderTextColor="#666"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#666"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        placeholderTextColor="#666"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.registerButtonText}>Cadastrar</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.loginButtonText}>Já tem uma conta? Faça Login</Text>
-      </TouchableOpacity>
-    </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView contentContainerStyle={styles.container}>
+          <View style={{ alignItems: 'center' }}>
+            <Image source={require('../assets/images/logo.png')} style={styles.logo} />
+          </View>
+          <Text style={styles.title}>CheckPoint</Text>
+          <Text style={styles.subtitle}>Avalie seus jogos favoritos</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Nome de usuário"
+            placeholderTextColor="#666"
+            value={username}
+            onChangeText={setUsername}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#666"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            placeholderTextColor="#666"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+          <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+            <Text style={styles.registerButtonText}>Cadastrar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
+            <Text style={styles.loginButtonText}>Já tem uma conta? Faça Login</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     padding: 20,
   },

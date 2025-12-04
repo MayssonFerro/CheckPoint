@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, Alert, Text, Image } from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet, Alert, Text, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { loginUser } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
 
@@ -18,43 +18,50 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={{ alignItems: 'center' }}>
-      <Text style={styles.title}>Bem vindo de volta!</Text>
-        <Image source={require('../assets/images/logo.png')} style={styles.logo} />
-      </View>
-      <Text style={styles.title}>CheckPoint</Text>
-      <Text style={styles.subtitle}>Avalie seus jogos favoritos</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#666"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        placeholderTextColor="#666"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.primaryButton} onPress={handleLogin}>
-        <Text style={styles.primaryButtonText}>Entrar</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('Cadastrar')}>
-        <Text style={styles.secondaryButtonText}>Não tem conta? Cadastre-se</Text>
-      </TouchableOpacity>
-    </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView contentContainerStyle={styles.container}>
+          <View style={{ alignItems: 'center' }}>
+            <Text style={styles.title}>Bem vindo de volta!</Text>
+            <Image source={require('../assets/images/logo.png')} style={styles.logo} />
+          </View>
+          <Text style={styles.title}>CheckPoint</Text>
+          <Text style={styles.subtitle}>Avalie seus jogos favoritos</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#666"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            placeholderTextColor="#666"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+          <TouchableOpacity style={styles.primaryButton} onPress={handleLogin}>
+            <Text style={styles.primaryButtonText}>Entrar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('Cadastrar')}>
+            <Text style={styles.secondaryButtonText}>Não tem conta? Cadastre-se</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     padding: 20,
   },

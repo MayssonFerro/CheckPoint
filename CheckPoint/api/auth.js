@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://192.168.15.102:5000/api/auth';
+const API_URL = 'https://checkpoint-api.onrender.com/api/auth';
 
 export const registerUser = async (username, email, password) => {
   try {
