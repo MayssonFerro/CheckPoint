@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   listContainer: {
-    paddingBottom: 80, // Add padding to avoid FAB overlap
+    paddingBottom: 80,
     paddingTop: 20,
   },
   sectionTitle: {

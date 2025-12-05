@@ -24,7 +24,6 @@ const ProfileScreen = ({ navigation }) => {
     if (userToken) {
       fetchUserReviews();
     } else {
-      // no user token: ensure state is reset and loading is false
       setUserReviews([]);
       setLoading(false);
     }
@@ -124,7 +123,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   listContainer: {
-    paddingBottom: 80, // Add padding to avoid FAB overlap
+    paddingBottom: 80,
   },
   reviewItem: {
     backgroundColor: '#202020',
