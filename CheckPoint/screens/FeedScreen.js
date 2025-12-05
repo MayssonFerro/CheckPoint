@@ -47,6 +47,19 @@ const FeedScreen = ({ navigation }) => {
       <Text style={styles.opinion}>{item.opinion}</Text>
       
       <View style={styles.footer}>
+        <View style={styles.recommendationContainer}>
+          <Ionicons 
+            name={item.recommended ? "thumbs-up" : "thumbs-down"} 
+            size={16} 
+            color={item.recommended ? "#4CAF50" : "#F44336"} 
+          />
+          <Text style={[
+            styles.recommendationText, 
+            { color: item.recommended ? "#4CAF50" : "#F44336" }
+          ]}>
+            {item.recommended ? "Recomendado" : "Não Recomendado"}
+          </Text>
+        </View>
         <Text style={styles.username}>por {item.user?.username || 'Unknown User'}</Text>
       </View>
     </View>
@@ -127,7 +140,19 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   footer: {
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  recommendationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  recommendationText: {
+    fontFamily: 'Ubuntu_700Bold',
+    fontSize: 12,
+    marginLeft: 5,
   },
   username: {
     fontFamily: 'Ubuntu_400Regular',
@@ -141,7 +166,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     right: 20,
-    bottom: 20,
+    bottom: 40,
     backgroundColor: '#fa801f',
     borderRadius: 30,
     elevation: 8,

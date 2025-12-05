@@ -13,6 +13,7 @@ const AddReviewScreen = ({ route, navigation }) => {
   const [platformPlayed, setPlatformPlayed] = useState('');
   const [recommended, setRecommended] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [gameDetails, setGameDetails] = useState(null);
 
   useEffect(() => {
@@ -49,16 +50,16 @@ const AddReviewScreen = ({ route, navigation }) => {
   }, [reviewId, userToken, navigation]);
 
   const handleSubmit = async () => {
+    if (isSubmitting) return;
+
     if (!rating || !opinion) {
       Alert.alert('Erro', 'Por favor, preencha a nota e a opinião.');
       return;
     }
 
     const numericRating = Number(rating);
-    if (isNaN(numericRating) || numericRating < 1 || numericRating > 10) {
-      Alert.alert('Erro', 'A nota deve ser um número entre 1 e 10.');
-      return;
-    }
+
+    setIsSubmitting(true);
 
     try {
       if (isEditing) {
@@ -86,6 +87,7 @@ const AddReviewScreen = ({ route, navigation }) => {
       }
     } catch (_error) {
       Alert.alert('Erro', isEditing ? 'Falha ao atualizar review.' : 'Falha ao criar review.');
+      setIsSubmitting(false);
     }
   };
 
@@ -180,8 +182,14 @@ const AddReviewScreen = ({ route, navigation }) => {
             </View>
           )}
 
-          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-            <Text style={styles.submitButtonText}>{isEditing ? "Atualizar Review" : "Enviar Review"}</Text>
+          <TouchableOpacity 
+            style={[styles.submitButton, isSubmitting && { opacity: 0.7 }]} 
+            onPress={handleSubmit}
+            disabled={isSubmitting}
+          >
+            <Text style={styles.submitButtonText}>
+              {isSubmitting ? "Enviando..." : (isEditing ? "Atualizar Review" : "Enviar Review")}
+            </Text>
           </TouchableOpacity>
         </ScrollView>
       </TouchableWithoutFeedback>
