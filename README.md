@@ -1,4 +1,4 @@
-# CheckPoint 🎮
+# CheckPoint 🚩
 
 ## 📖 Sobre o Projeto
 **CheckPoint** é um aplicativo móvel desenvolvido para a comunidade gamer. O objetivo principal é criar um espaço onde os usuários possam registrar suas experiências, avaliar jogos que jogaram e compartilhar opiniões com outros jogadores. O app consome dados reais de jogos (como capas e títulos) através da API da RAWG.
