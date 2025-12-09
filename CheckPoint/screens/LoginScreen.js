@@ -1,19 +1,24 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, Alert, Text, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet, Alert, Text, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from 'react-native';
 import { loginUser } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
 
   const handleLogin = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
     try {
       const data = await loginUser(email, password);
       signIn(data.token);
     } catch (_error) {
       Alert.alert('Erro', 'Falha no login. Verifique suas credenciais.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -47,8 +52,12 @@ const LoginScreen = ({ navigation }) => {
             onChangeText={setPassword}
             secureTextEntry
           />
-          <TouchableOpacity style={styles.primaryButton} onPress={handleLogin}>
-            <Text style={styles.primaryButtonText}>Entrar</Text>
+          <TouchableOpacity style={styles.primaryButton} onPress={handleLogin} disabled={isLoading}>
+            {isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.primaryButtonText}>Entrar</Text>
+            )}
           </TouchableOpacity>
           <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('Cadastrar')}>
             <Text style={styles.secondaryButtonText}>Não tem conta? Cadastre-se</Text>

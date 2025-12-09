@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, Alert, Text, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet, Alert, Text, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from 'react-native';
 import { registerUser } from '../api/auth';
 
 const RegisterScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
     try {
       await registerUser(username, email, password);
       Alert.alert(
@@ -20,6 +23,8 @@ const RegisterScreen = ({ navigation }) => {
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message || 'Falha ao cadastrar usuário.';
       Alert.alert('Erro', errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -59,8 +64,12 @@ const RegisterScreen = ({ navigation }) => {
             onChangeText={setPassword}
             secureTextEntry
           />
-          <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-            <Text style={styles.registerButtonText}>Cadastrar</Text>
+          <TouchableOpacity style={styles.registerButton} onPress={handleRegister} disabled={isLoading}>
+            {isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.registerButtonText}>Cadastrar</Text>
+            )}
           </TouchableOpacity>
           <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
             <Text style={styles.loginButtonText}>Já tem uma conta? Faça Login</Text>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert, Switch, TouchableOpacity, ScrollView, Image, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, Switch, TouchableOpacity, ScrollView, Image, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Modal } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { createReview, getReviewById, updateReview } from '../api/reviewService';
 import { getGameDetails } from '../api/rawg';
@@ -14,6 +15,7 @@ const AddReviewScreen = ({ route, navigation }) => {
   const [recommended, setRecommended] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [gameDetails, setGameDetails] = useState(null);
 
   useEffect(() => {
@@ -69,9 +71,7 @@ const AddReviewScreen = ({ route, navigation }) => {
           recommended,
           platform_played: platformPlayed,
         });
-        Alert.alert('Sucesso', 'Review atualizada com sucesso!', [
-          { text: 'OK', onPress: () => navigation.goBack() }
-        ]);
+        setSuccessModalVisible(true);
       } else {
         await createReview(userToken, gameId, {
           rating: numericRating,
@@ -81,13 +81,20 @@ const AddReviewScreen = ({ route, navigation }) => {
           game_name: gameName,
           game_background_image: gameDetails?.background_image
         });
-        Alert.alert('Sucesso', 'Review criada com sucesso!', [
-          { text: 'OK', onPress: () => navigation.popToTop() }
-        ]);
+        setSuccessModalVisible(true);
       }
     } catch (_error) {
       Alert.alert('Erro', isEditing ? 'Falha ao atualizar review.' : 'Falha ao criar review.');
       setIsSubmitting(false);
+    }
+  };
+
+  const handleSuccessClose = () => {
+    setSuccessModalVisible(false);
+    if (isEditing) {
+      navigation.goBack();
+    } else {
+      navigation.popToTop();
     }
   };
 
@@ -193,6 +200,29 @@ const AddReviewScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         </ScrollView>
       </TouchableWithoutFeedback>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={successModalVisible}
+        onRequestClose={handleSuccessClose}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Ionicons name="checkmark-circle" size={50} color="#4CAF50" style={{ marginBottom: 10 }} />
+            <Text style={styles.modalTitle}>Sucesso!</Text>
+            <Text style={styles.modalText}>
+              {isEditing ? 'Review atualizada com sucesso!' : 'Review criada com sucesso!'}
+            </Text>
+            <TouchableOpacity 
+              style={[styles.modalButton, styles.okButton]} 
+              onPress={handleSuccessClose}
+            >
+              <Text style={styles.buttonText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 };
@@ -331,6 +361,48 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontFamily: 'Ubuntu_700Bold',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#202020',
+    borderRadius: 10,
+    padding: 20,
+    width: '80%',
+    alignItems: 'center',
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontFamily: 'Ubuntu_700Bold',
+    color: '#fff',
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    fontFamily: 'Ubuntu_400Regular',
+    color: '#ccc',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  modalButton: {
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  okButton: {
+    backgroundColor: '#4CAF50',
+    marginTop: 10,
+    width: '100%',
+  },
+  buttonText: {
+    color: '#fff',
+    fontFamily: 'Ubuntu_700Bold',
+    fontSize: 14,
   },
 });
 
