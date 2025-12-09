@@ -14,8 +14,8 @@ app.use(express.json());
 
 // Database Connection
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/checkpoint')
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('Could not connect to MongoDB', err));
+  .then(() => console.log('Conectado ao MongoDB'))
+  .catch(err => console.error('Não foi possível conectar ao MongoDB', err));
 
 // Routes
 app.use('/api/auth', authRoutes);

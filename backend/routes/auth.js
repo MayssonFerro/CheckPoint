@@ -23,8 +23,8 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json({ userId: newUser._id });
   } catch (error) {
-    console.error('Error in /register:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('Erro em /register:', error);
+    res.status(500).json({ message: 'Erro no servidor', error: error.message });
   }
 });
 
@@ -34,19 +34,19 @@ router.post('/login', async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Credenciais inválidas' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Credenciais inválidas' });
     }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     res.json({ token });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Erro no servidor', error: error.message });
   }
 });
 

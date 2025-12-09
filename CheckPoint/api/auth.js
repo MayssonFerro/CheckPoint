@@ -11,7 +11,7 @@ export const registerUser = async (username, email, password) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error registering user:', error);
+    console.error('Erro ao registrar usuário:', error);
     throw error;
   }
 };
@@ -24,7 +24,7 @@ export const loginUser = async (email, password) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error logging in:', error);
+    console.error('Erro ao fazer login:', error);
     throw error;
   }
 };

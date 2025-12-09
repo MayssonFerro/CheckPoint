@@ -11,10 +11,10 @@ const protect = (req, res, next) => {
       req.user = decoded.userId;
       next();
     } catch (error) {
-      res.status(401).json({ message: 'Not authorized, token failed' });
+      res.status(401).json({ message: 'Não autorizado, token inválido' });
     }
   } else {
-    res.status(401).json({ message: 'Not authorized, no token' });
+    res.status(401).json({ message: 'Não autorizado, nenhum token' });
   }
 };
 

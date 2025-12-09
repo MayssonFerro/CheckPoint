@@ -23,7 +23,7 @@ const AddReviewScreen = ({ route, navigation }) => {
           const details = await getGameDetails(gameId);
           setGameDetails(details);
         } catch (error) {
-          console.error('Error fetching game details:', error);
+          console.error('Erro ao buscar detalhes do jogo:', error);
         }
       }
     };

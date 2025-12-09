@@ -17,7 +17,7 @@ const FeedScreen = ({ navigation }) => {
           const data = await getFeedReviews(userToken);
           setReviews(data);
         } catch (error) {
-          console.error('Failed to fetch reviews', error);
+          console.error('Falha ao buscar reviews', error);
         } finally {
           setLoading(false);
         }
@@ -60,7 +60,7 @@ const FeedScreen = ({ navigation }) => {
             {item.recommended ? "Recomendado" : "Não Recomendado"}
           </Text>
         </View>
-        <Text style={styles.username}>por {item.user?.username || 'Unknown User'}</Text>
+        <Text style={styles.username}>por {item.user?.username || 'Usuário Desconhecido'}</Text>
       </View>
     </View>
   );

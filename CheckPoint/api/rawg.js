@@ -13,7 +13,7 @@ export const searchGames = async (query) => {
     });
     return response.data.results;
   } catch (error) {
-    console.error('Error searching games:', error.message);
+    console.error('Erro ao buscar jogos:', error.message);
     if (error.response) {
       console.error('Response data:', error.response.data);
       console.error('Response status:', error.response.status);
@@ -33,7 +33,7 @@ export const getGameDetails = async (id) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching game details:', error);
+    console.error('Erro ao buscar detalhes do jogo:', error);
     throw error;
   }
 };

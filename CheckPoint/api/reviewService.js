@@ -6,7 +6,7 @@ export const getFeedReviews = async (token) => {
     const response = await client.get('reviews');
     return response.data;
   } catch (error) {
-    console.error('Error fetching feed reviews:', error);
+    console.error('Erro ao buscar feed de reviews:', error);
     throw error;
   }
 };
@@ -20,7 +20,7 @@ export const createReview = async (token, rawg_game_id, reviewData) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error creating review:', error);
+    console.error('Erro ao criar review:', error);
     throw error;
   }
 };
@@ -31,7 +31,7 @@ export const getUserReviews = async (token) => {
     const response = await client.get('reviews/my-reviews');
     return response.data;
   } catch (error) {
-    console.error('Error fetching user reviews:', error);
+    console.error('Erro ao buscar reviews do usuário:', error);
     throw error;
   }
 };
@@ -41,7 +41,7 @@ export const deleteReview = async (token, reviewId) => {
     const client = createAuthClient(token);
     await client.delete(`reviews/${reviewId}`);
   } catch (error) {
-    console.error('Error deleting review:', error);
+    console.error('Erro ao deletar review:', error);
     throw error;
   }
 };
@@ -52,7 +52,7 @@ export const updateReview = async (token, reviewId, updatedData) => {
     const response = await client.put(`reviews/${reviewId}`, updatedData);
     return response.data;
   } catch (error) {
-    console.error('Error updating review:', error);
+    console.error('Erro ao atualizar review:', error);
     throw error;
   }
 };
@@ -63,7 +63,7 @@ export const getReviewById = async (token, reviewId) => {
     const response = await client.get(`reviews/${reviewId}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching review by id:', error);
+    console.error('Erro ao buscar review por id:', error);
     throw error;
   }
 };

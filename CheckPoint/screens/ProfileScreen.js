@@ -15,7 +15,7 @@ const ProfileScreen = ({ navigation }) => {
         const data = await getUserReviews(userToken);
         setUserReviews(data);
       } catch (error) {
-        console.error('Failed to fetch user reviews', error);
+        console.error('Falha ao buscar reviews do usuário', error);
       } finally {
         setLoading(false);
       }

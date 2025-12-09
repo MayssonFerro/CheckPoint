@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
           setUserToken(token);
         }
       } catch (e) {
-        console.error('Failed to load token', e);
+        console.error('Falha ao carregar token', e);
       } finally {
         setIsLoading(false);
       }
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
       await SecureStore.setItemAsync('userToken', token);
       setUserToken(token);
     } catch (e) {
-      console.error('Failed to save token', e);
+      console.error('Falha ao salvar token', e);
     }
   };
 
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
       await SecureStore.deleteItemAsync('userToken');
       setUserToken(null);
     } catch (e) {
-      console.error('Failed to remove token', e);
+      console.error('Falha ao remover token', e);
     }
   };
 
